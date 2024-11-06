@@ -38,6 +38,9 @@ def Charge(item):
     }
     return Prices.get(item,0)
 
+def update_inventory():
+    global current_order
+
 
 def add_to_total(item,name):
     global total
@@ -145,11 +148,20 @@ current_order = []
 inventory = {
     "Potatoes (kg)":50,
     "Fish": 15,
+    "Fish Cake":25,
+    "Sampi":50,
     # Pies
     "S&K Pie" : 10,
     "C&M Pie": 10,
-    "B&O Pie0":10,
-    "Sausages":25,
+    "B&O Pie":10,
+    "Sausage":25,
+    #Burgers
+    "Rolls":20,
+    "CS Patty":10,
+    "B Patty":10,
+    "Z Patty":10,
+    "Chn Fillet":10,
+    "PB Patty": 10,
     #Chicken
     "Ckn Ng" : 30,
     "Chn Bts": 50,
@@ -159,7 +171,34 @@ inventory = {
     "Pck Egg" : 30,
     "Pck Onion": 30,
     "Pck Gherkin":30,
-    "Cans" : 48
+    "Cans" : 48,
+    "Sauce": 50
+}
+
+#Assign weights to each item 
+ingredient_use = {
+"Cod Bites&Chips":{"Fish":0.5,"Potatoes": 0.25},"Regular Fish&Chips":{"Fish":1,"Potatoes": 0.5},
+"Large Fish&Chips":{"Fish":1.5,"Potatoes": 0.5},
+
+"Cod Bites":{"Fish":0.5},"Regular Fish":{"Fish":1},"Large Fish":{"Fish":1.5},"Fish Cake":{"Fish Cake":1},
+"Scampi 7pcs":{"Scampi":7},"Scampi 10pcs":{"Scampi":10},
+
+"Cone of Chips":{"Potatoes":0.1},"Tray of Chips":{"Potatoes":0.2},"Regular Chips":{"Potatoes":0.25},
+"Large Chips":{"Potatoes":0.5},"Cheesy Chips":{"Potatoes":0.25,"Cheese":0.2},
+"Battered Scallop":{"Potatoes":0.1},"Chip Butty":{"Potatoes":0.1,"Roll":1},
+
+"Steak&Kidney":{"S&K Pie":1},"Chicken&Mushroom":{"C&M Pie":1},"Beef&Onion":{"B&O Pie":1},
+
+"Jumbo Sausage":{"Sausage":1},"Battered Sausage":{"Sausage":1},"5 Chicken Nuggets":{"Ckn Ng":5},"10 Chicken Nuggets":{"Ckn Ng":10},
+"5 Chicken Bites":{"Chn Bts":5},"10 Chicken Bites":{"Chn Bts":10},"3 Chicken Fillets":{"Ckn Flts":3},"5 Chicken Fillets":{"Ckn Flts":5},
+"25 S/F Chicken":{"S/F Ckn": 25},
+
+"Chicken Steak Burger":{ "CS Patty":1,"Roll":1},"Beef Burger":{ "B Patty":1,"Roll":1},"Zinger Burger":{ "Z Patty":1,"Roll":1},
+"Chicken Fillet Burger":{ "Ckn Flts":1,"Roll":1},"Premium Beef Burger":{"PB Patty": 1,"Roll":1},"Battered Burger Patty":{ "Ckn Flts":1,"Roll":1},
+"Make it a Meal":{"Potatoes":0.2,"Cans":1},
+
+"Pickled Egg":{"Pck Egg" : 1},"Pickled Onion":{"Pck Onion" : 1},"Pickled Gherkin":{"Pck Gherkin" : 1},
+"Small Sauce":{"Sauce":5},"Large Sauce":{"Sauce":10}
 }
 
 root = Tk() # Create the root widget
