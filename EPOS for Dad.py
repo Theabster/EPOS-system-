@@ -5,6 +5,8 @@ import csv
 from datetime import datetime
 import os
 
+#File Path to CSV file
+file_inventory = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\Inventory.csv"
 
 # Login Functions
 def login_validation(u,p):
@@ -38,8 +40,92 @@ def Charge(item):
     }
     return Prices.get(item,0)
 
+inventory = {"Potatoes":50,"Fish": 15,"Fish Cake":25,"Sampi":50,"S&K Pie" : 10,"C&M Pie": 10,"B&O Pie":10,"Sausage":25,
+             "Rolls":20,"CS Patty":10,"B Patty":10,"Z Patty":10,"Chn Fillet":10,"PB Patty": 10,"Ckn Ng" : 30,"Chn Bts": 50,
+             "Ckn Flts":20,"S/F Ckn": 100,"Pck Egg" : 30,"Pck Onion": 30,"Pck Gherkin":30,"Cans" : 48,"Sauce": 50
+             }
+
+
+
+#Assign weights to each item - ADD to csv file instead 
+def deduct_item(item):
+    ingredient_use = {
+    "Cod Bites&Chips":{"Fish":0.5,"Potatoes": 0.25},"Regular Fish&Chips":{"Fish":1,"Potatoes": 0.5},
+    "Large Fish&Chips":{"Fish":1.5,"Potatoes": 0.5},
+
+    "Cod Bites":{"Fish":0.5},"Regular Fish":{"Fish":1},"Large Fish":{"Fish":1.5},"Fish Cake":{"Fish Cake":1},
+    "Scampi 7pcs":{"Scampi":7},"Scampi 10pcs":{"Scampi":10},
+
+    "Cone of Chips":{"Potatoes":0.1},"Tray of Chips":{"Potatoes":0.2},"Regular Chips":{"Potatoes":0.25},
+    "Large Chips":{"Potatoes":0.5},"Cheesy Chips":{"Potatoes":0.25,"Cheese":0.2},
+    "Battered Scallop":{"Potatoes":0.1},"Chip Butty":{"Potatoes":0.1,"Roll":1},
+
+    "Steak&Kidney":{"S&K Pie":1},"Chicken&Mushroom":{"C&M Pie":1},"Beef&Onion":{"B&O Pie":1},
+
+    "Jumbo Sausage":{"Sausage":1},"Battered Sausage":{"Sausage":1},"5 Chicken Nuggets":{"Ckn Ng":5},"10 Chicken Nuggets":{"Ckn Ng":10},
+    "5 Chicken Bites":{"Chn Bts":5},"10 Chicken Bites":{"Chn Bts":10},"3 Chicken Fillets":{"Ckn Flts":3},"5 Chicken Fillets":{"Ckn Flts":5},
+    "25 S/F Chicken":{"S/F Ckn": 25},
+
+    "Chicken Steak Burger":{ "CS Patty":1,"Roll":1},"Beef Burger":{ "B Patty":1,"Roll":1},"Zinger Burger":{ "Z Patty":1,"Roll":1},
+    "Chicken Fillet Burger":{ "Ckn Flts":1,"Roll":1},"Premium Beef Burger":{"PB Patty": 1,"Roll":1},"Battered Burger Patty":{ "Ckn Flts":1,"Roll":1},
+    "Make it a Meal":{"Potatoes":0.2,"Cans":1},
+
+    "Pickled Egg":{"Pck Egg" : 1},"Pickled Onion":{"Pck Onion" : 1},"Pickled Gherkin":{"Pck Gherkin" : 1},
+    "Small Sauce":{"Sauce":5},"Large Sauce":{"Sauce":10}
+    }
+    return ingredient_use.get(item)
+
+def read_inventory():
+    #Reads inventory from the CSV file and returns it as a dictionary
+    inventory = {}
+    with open(file_inventory, mode="r", newline="") as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip the header
+        for row in reader:
+            item, quantity = row
+            inventory[item] = float(quantity)  # Assuming quantities might not be whole numbers
+    return inventory
+
+def write_inventory(inventory):
+    #Writes the updated inventory back to the CSV file
+    with open(file_inventory, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Item", "Quantity"])  # Write the header
+        for item, quantity in inventory.items():
+            writer.writerow([item, quantity])
+
+# Function to remove items from the inventory once an order is complete
+# 2 reg f&c current_order looks like this ['RFC', 'Regular Fish&Chips', 'RFC', 'Regular Fish&Chips']
+# 1. Identify individual items
+# 2. Map them to their associated weights
+# 3. Deduct the weight from the inventory
 def update_inventory():
     global current_order
+    items = current_order[1::2]
+    inventory = read_inventory()
+    for item in items:
+        # For each item find it's associated weighting
+        ingredients = deduct_item(item)
+        # If the item was found
+        if ingredients:
+            # iterate over dictionary of items and weights in order
+            for ingredient,quantity in ingredients.items():
+                if ingredient in inventory:
+                    # Update the quantity for the ingredient in the inventory
+                    if inventory[ingredient] >= quantity:
+                        inventory[ingredient] -=quantity
+                    else:
+                        print(f"Insufficient stock for {ingredient}")
+                else:
+                    print(f"{ingredient}not found in inventory")
+    write_inventory(inventory)  # Write the updated inventory back to CSV
+    print("Updated Inventory:", inventory)
+
+def restock_inventory(item, amount):
+    if item in inventory:
+        inventory[item] += amount
+    else:
+        print(f"{item} not found in inventory. Check item name.")
 
 
 def add_to_total(item,name):
@@ -68,15 +154,18 @@ def calculate_cashback():
 # Function to save current order as a csv file
 def save_order_to_csv():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    file_path = os.path.join("C:\\Users\\abdul\\OneDrive\\Documents\\3rd (Placement) Year\\Python Projects\\EPOS for Dad" , "daily_orders.csv")
+    file_path = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\daily_orders.csv"
     with open(file_path,mode="a",newline="")as file:
         writer = csv.writer(file)
         writer.writerow([timestamp, ",".join(current_order),f"{total:2f}"])
 
 #Function to clear fileds for a new order and save order to the CSV
 def complete_order():
+    update_inventory()
     save_order_to_csv()
     clear_all()
+    
+    
 
 # function to clear all fields
 def clear_all():
@@ -145,61 +234,7 @@ def total_sales():
 
 total = 0
 current_order = []
-inventory = {
-    "Potatoes (kg)":50,
-    "Fish": 15,
-    "Fish Cake":25,
-    "Sampi":50,
-    # Pies
-    "S&K Pie" : 10,
-    "C&M Pie": 10,
-    "B&O Pie":10,
-    "Sausage":25,
-    #Burgers
-    "Rolls":20,
-    "CS Patty":10,
-    "B Patty":10,
-    "Z Patty":10,
-    "Chn Fillet":10,
-    "PB Patty": 10,
-    #Chicken
-    "Ckn Ng" : 30,
-    "Chn Bts": 50,
-    "Ckn Flts":20,
-    "S/F Ckn": 100,
-    # Pickles
-    "Pck Egg" : 30,
-    "Pck Onion": 30,
-    "Pck Gherkin":30,
-    "Cans" : 48,
-    "Sauce": 50
-}
 
-#Assign weights to each item 
-ingredient_use = {
-"Cod Bites&Chips":{"Fish":0.5,"Potatoes": 0.25},"Regular Fish&Chips":{"Fish":1,"Potatoes": 0.5},
-"Large Fish&Chips":{"Fish":1.5,"Potatoes": 0.5},
-
-"Cod Bites":{"Fish":0.5},"Regular Fish":{"Fish":1},"Large Fish":{"Fish":1.5},"Fish Cake":{"Fish Cake":1},
-"Scampi 7pcs":{"Scampi":7},"Scampi 10pcs":{"Scampi":10},
-
-"Cone of Chips":{"Potatoes":0.1},"Tray of Chips":{"Potatoes":0.2},"Regular Chips":{"Potatoes":0.25},
-"Large Chips":{"Potatoes":0.5},"Cheesy Chips":{"Potatoes":0.25,"Cheese":0.2},
-"Battered Scallop":{"Potatoes":0.1},"Chip Butty":{"Potatoes":0.1,"Roll":1},
-
-"Steak&Kidney":{"S&K Pie":1},"Chicken&Mushroom":{"C&M Pie":1},"Beef&Onion":{"B&O Pie":1},
-
-"Jumbo Sausage":{"Sausage":1},"Battered Sausage":{"Sausage":1},"5 Chicken Nuggets":{"Ckn Ng":5},"10 Chicken Nuggets":{"Ckn Ng":10},
-"5 Chicken Bites":{"Chn Bts":5},"10 Chicken Bites":{"Chn Bts":10},"3 Chicken Fillets":{"Ckn Flts":3},"5 Chicken Fillets":{"Ckn Flts":5},
-"25 S/F Chicken":{"S/F Ckn": 25},
-
-"Chicken Steak Burger":{ "CS Patty":1,"Roll":1},"Beef Burger":{ "B Patty":1,"Roll":1},"Zinger Burger":{ "Z Patty":1,"Roll":1},
-"Chicken Fillet Burger":{ "Ckn Flts":1,"Roll":1},"Premium Beef Burger":{"PB Patty": 1,"Roll":1},"Battered Burger Patty":{ "Ckn Flts":1,"Roll":1},
-"Make it a Meal":{"Potatoes":0.2,"Cans":1},
-
-"Pickled Egg":{"Pck Egg" : 1},"Pickled Onion":{"Pck Onion" : 1},"Pickled Gherkin":{"Pck Gherkin" : 1},
-"Small Sauce":{"Sauce":5},"Large Sauce":{"Sauce":10}
-}
 
 root = Tk() # Create the root widget
 root.title("Wellington Fryer EPOS") # Add title to window
