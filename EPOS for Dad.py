@@ -4,6 +4,7 @@ from tkinter import messagebox
 import csv  
 from datetime import datetime
 import os
+#Added github change 
 
 #File Path to CSV file
 file_inventory = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\Inventory.csv"
@@ -45,13 +46,9 @@ inventory = {"Potatoes":50,"Fish": 15,"Fish Cake":25,"Sampi":50,"S&K Pie" : 10,"
              "Ckn Flts":20,"S/F Ckn": 100,"Pck Egg" : 30,"Pck Onion": 30,"Pck Gherkin":30,"Cans" : 48,"Sauce": 50
              }
 
-<<<<<<< HEAD
 
 
 #Assign weights to each item - ADD to csv file instead 
-=======
-#Assign weights to each item 
->>>>>>> 2ab5f71b34cf3b66f60ebb0054f792a8eaede757
 def deduct_item(item):
     ingredient_use = {
     "Cod Bites&Chips":{"Fish":0.5,"Potatoes": 0.25},"Regular Fish&Chips":{"Fish":1,"Potatoes": 0.5},
@@ -79,7 +76,6 @@ def deduct_item(item):
     }
     return ingredient_use.get(item)
 
-<<<<<<< HEAD
 def read_inventory():
     #Reads inventory from the CSV file and returns it as a dictionary
     inventory = {}
@@ -99,8 +95,6 @@ def write_inventory(inventory):
         for item, quantity in inventory.items():
             writer.writerow([item, quantity])
 
-=======
->>>>>>> 2ab5f71b34cf3b66f60ebb0054f792a8eaede757
 # Function to remove items from the inventory once an order is complete
 # 2 reg f&c current_order looks like this ['RFC', 'Regular Fish&Chips', 'RFC', 'Regular Fish&Chips']
 # 1. Identify individual items
@@ -109,7 +103,6 @@ def write_inventory(inventory):
 def update_inventory():
     global current_order
     items = current_order[1::2]
-<<<<<<< HEAD
     inventory = read_inventory()
     for item in items:
         # For each item find it's associated weighting
@@ -120,24 +113,13 @@ def update_inventory():
             for ingredient,quantity in ingredients.items():
                 if ingredient in inventory:
                     # Update the quantity for the ingredient in the inventory
-=======
-    print(items)
-    for item in items:
-        ingredients = deduct_item(item)
-        if ingredients:
-            for ingredient,quantity in ingredients.items():
-                if ingredient in inventory:
->>>>>>> 2ab5f71b34cf3b66f60ebb0054f792a8eaede757
                     if inventory[ingredient] >= quantity:
                         inventory[ingredient] -=quantity
                     else:
                         print(f"Insufficient stock for {ingredient}")
                 else:
                     print(f"{ingredient}not found in inventory")
-<<<<<<< HEAD
     write_inventory(inventory)  # Write the updated inventory back to CSV
-=======
->>>>>>> 2ab5f71b34cf3b66f60ebb0054f792a8eaede757
     print("Updated Inventory:", inventory)
 
 def restock_inventory(item, amount):
@@ -174,15 +156,9 @@ def calculate_cashback():
 def save_order_to_csv():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     file_path = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\daily_orders.csv"
-<<<<<<< HEAD
     with open(file_path,mode="a",newline="")as file:
-=======
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure the directory exists
-    
-    with open(file_path, mode="a", newline="") as file:
->>>>>>> 2ab5f71b34cf3b66f60ebb0054f792a8eaede757
         writer = csv.writer(file)
-        writer.writerow([timestamp, ",".join(current_order), f"{total:.2f}"])
+        writer.writerow([timestamp, ",".join(current_order),f"{total:2f}"])
 
 #Function to clear fileds for a new order and save order to the CSV
 def complete_order():
