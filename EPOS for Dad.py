@@ -7,7 +7,7 @@ import os
 #Added github change 
 
 #File Path to CSV file
-file_inventory = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\Inventory.csv"
+file_inventory = r"Inventory.csv"
 
 # Login Functions
 def login_validation(u,p):
@@ -155,7 +155,7 @@ def calculate_cashback():
 # Function to save current order as a csv file
 def save_order_to_csv():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    file_path = r"C:\Users\abdul\OneDrive\Documents\3rd (Placement) Year\Python Projects\EPOS for Dad\daily_orders.csv"
+    file_path = r"daily_orders.csv"
     with open(file_path,mode="a",newline="")as file:
         writer = csv.writer(file)
         writer.writerow([timestamp, ",".join(current_order),f"{total:2f}"])
@@ -211,7 +211,7 @@ def cancel_item():
 def total_sales():
     total_sales = 0.00
     today = datetime.now().strftime("%Y-%m-%d") #Today's date 
-    file_path = os.path.join("C:\\Users\\abdul\\OneDrive\\Documents\\3rd (Placement) Year\\Python Projects\\EPOS for Dad" , "daily_orders.csv") 
+    file_path = os.path.join("daily_orders.csv") 
 
     try:
         with open(file_path,mode="r",newline="")as file:
