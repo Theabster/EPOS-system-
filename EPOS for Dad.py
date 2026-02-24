@@ -11,9 +11,18 @@ file_inventory = r"Inventory.csv"
 
 # Login Functions
 def login_validation(u,p):
+    """
+    Docstring for login_validation
+    
+    :param u: Description
+    :param p: Description
+    """
     return u == "Imtiaz" and p == "123"
     
 def try_login():
+    """
+    Docstring for try_login
+    """
     username = username_entry.get()
     password = password_entry.get()
     
@@ -28,6 +37,11 @@ def try_login():
 # Here I want to create a function that evaluates the price of a menu item by finding it in a hashmap 
 # that maps the items to their corresponding prices
 def Charge(item):
+    """
+    Docstring for Charge
+    
+    :param item: Description
+    """
     Prices = {"SFC":6.95 ,"RFC":7.95,"LFC":8.95, 
     "SF":4.50,"RF":5.50,"LF":6.50,
     "CC":2.00,"TC":2.50,"RC":3.20,"LC":3.80,"CC":4.95,"S":0.60,"CHB":2.70,
@@ -248,8 +262,8 @@ root.geometry("300x300+100+100") # Set starting size and location of window
 # Set Meals
 set_meals = Label(root,text="Set Meals")
 set_meals.grid(row=0,column=0)
-SFC = tk.Button(root,text="Cod Bites&Chips",width = 15,command=lambda: add_to_total("SFC","Cod Bites&Chips"))
-SFC.grid(row =1, column = 0)
+USFC = tk.Button(root,text="Cod Bites&Chips",width = 15,command=lambda: add_to_total("SFC","Cod Bites&Chips"))
+USFC.grid(row =1, column = 0)
 RFC = tk.Button(root,text="Regular Fish&Chips",width = 15,command=lambda: add_to_total("RFC","Regular Fish&Chips"))
 RFC.grid(row =2, column = 0)
 LFC = tk.Button(root,text="Large Fish&Chips",width = 15,command=lambda: add_to_total("LFC","Large Fish&Chips"))
